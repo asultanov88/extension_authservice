@@ -25,7 +25,7 @@ class GetConfigController extends Controller
                 'client' => $client['EntityName'],
                 'isAdmin' => $clientAuth['isAdmin'],
                 'repositoryServer' => $clientServer['RepositoryServer'],
-                'registratonKey' => $clientAuth['AuthKey'],
+                'registrationKey' => $clientAuth['AuthKey'],
                 'token' => $this->generateRegToken($clientAuth['AuthKey']),
 
             ];
