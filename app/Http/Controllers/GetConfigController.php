@@ -20,13 +20,16 @@ class GetConfigController extends Controller
 
             $clientServer = ClientServer::where('ClientId', '=', $client['id'])->first();
 
+            // Making the clientId part of the registrationKey.
+            $registrationKey = $clientAuth['AuthKey'].'.'.$client['id'];
+
             $config = [
 
                 'client' => $client['EntityName'],
                 'isAdmin' => $clientAuth['isAdmin'],
                 'repositoryServer' => $clientServer['RepositoryServer'],
-                'registrationKey' => $clientAuth['AuthKey'].'.'.$client['id'],
-                'token' => $this->generateRegToken($clientAuth['AuthKey']),
+                'registrationKey' => $registrationKey,
+                'token' => $this->generateRegToken($registrationKey),
 
             ];
 

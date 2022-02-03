@@ -58,7 +58,8 @@ class RegisterClientController extends Controller
             $client['Zip'] = $request['Zip'];
             $client['Country'] = $request['Country'];
             // This is used to link other table records with the client.
-            $clientId = $client->save();
+            $client->save();
+            $clientId = $client['id'];
 
             // Saving into contact_person table.
             $contactPerson = new ContactPerson();
