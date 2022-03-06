@@ -62,7 +62,7 @@ class ClientSeeder extends Seeder
         $clientServer = [
 
             'ClientId' => 1,
-            'RepositoryServer' => 'https://extension-service.evendor.app/api/',
+            'RepositoryServer' => 'https://extension-service.evendor.app/api',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
 
