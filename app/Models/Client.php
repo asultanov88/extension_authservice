@@ -12,6 +12,7 @@ class Client extends Model
     protected $table = 'client';
 
     protected $fillable = [
+        'uuid',
         'EntityName',
         'Email',
         'PhoneNumber',

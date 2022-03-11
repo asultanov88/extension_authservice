@@ -30,6 +30,7 @@ class GetConfigController extends Controller
                 'repositoryServer' => $clientServer['RepositoryServer'],
                 'registrationKey' => $registrationKey,
                 'token' => $this->generateRegToken($registrationKey),
+                'uuid' => $client['uuid'],
 
             ];
 

@@ -32,6 +32,7 @@ class ClientSeeder extends Seeder
         $client = [
 
             'id' => 1,
+            'uuid' => '70ca7b25-24b4-40a5-8320-a9e105f65fb3',
             'EntityName' => 'My Test Company',
             'Email' => 'test_email@email.com',
             'PhoneNumber' => '+15617777777',

@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\ContactPerson;
 use App\Models\ClientServer;
 use App\Models\ClientAuth;
+use Illuminate\Support\Str;
 
 class RegisterClientController extends Controller
 {
@@ -48,6 +49,7 @@ class RegisterClientController extends Controller
 
             // Saving into client table.
             $client = new Client();
+            $client['uuid'] = Str::uuid()->toString(); 
             $client['EntityName'] = $request['EntityName'];
             $client['Email'] = $request['Email'];
             $client['PhoneNumber'] = $request['PhoneNumber'];
