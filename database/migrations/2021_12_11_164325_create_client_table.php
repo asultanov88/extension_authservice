@@ -25,6 +25,7 @@ class CreateClientTable extends Migration
             $table->string('State');
             $table->string('Zip');
             $table->string('Country');
+            $table->integer('JiraUser');
             $table->timestamps();
         });
     }

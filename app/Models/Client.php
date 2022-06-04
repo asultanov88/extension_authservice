@@ -22,5 +22,12 @@ class Client extends Model
         'State',
         'Zip',
         'Country',
+        'JiraUser',
     ];
+
+    // 'id' is the primary key in 'client' table.
+    // 'ClientId' is the foreign key in 'client_jira_controllers' table.
+    public function clientJiraController(){
+        return $this->hasOne(ClientJiraController::class, 'ClientId', 'id');
+    }
 }

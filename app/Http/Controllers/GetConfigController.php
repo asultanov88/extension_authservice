@@ -34,6 +34,18 @@ class GetConfigController extends Controller
 
             ];
 
+            // Add Jira settings only if user is a JiraUser.
+            if($client['JiraUser'] == 1){
+                $jiraSettings = $client->clientJiraController;
+                $config['jiraSettings'] = [
+                    'ClientJiraControllerId' => $jiraSettings->ClientJiraControllerId,
+                    'JiraDomain' => $jiraSettings->JiraDomain,
+                    'JiraUserName' => $jiraSettings->JiraUserName,
+                    'JiraApiKey' => $jiraSettings->JiraApiKey,
+                    'JiraIssueType' => $jiraSettings->JiraIssueType,
+                ];
+            }
+
             return response()->
             json($config, 200);
 

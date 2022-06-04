@@ -8,7 +8,9 @@ use App\Models\Client;
 use App\Models\ContactPerson;
 use App\Models\ClientServer;
 use App\Models\ClientAuth;
+use App\Models\ClientJiraController;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
 
 class RegisterClientController extends Controller
 {
@@ -18,7 +20,7 @@ class RegisterClientController extends Controller
         $request->validate([
             'EntityName' => 'required|max:50',
             'Email' => 'required|email:rfc,dns|unique:client|max:100',
-            'PhoneNumber' => 'required|max:50',
+            'PhoneNumber' => 'required|unique:client|max:50',
             'Address1' => 'required|max:255',
             'Address2' => 'max:255',
             'County' => 'required|max:50',
@@ -26,6 +28,10 @@ class RegisterClientController extends Controller
             'Zip' => 'required|max:50',
             'Country' => 'required|max:50',
             'ExpirationInYears' => 'required|numeric|max:3',
+            // Defines if user uses the common respository or private.
+            'CommonUser' => 'required|boolean',
+            // Defines if user has Jira integration.
+            'JiraUser' => 'required|boolean',
 
             // Entity contact person valdation. Nested object name: contact_person
             'contact_person.FirstName' => 'required|max:50',
@@ -33,6 +39,16 @@ class RegisterClientController extends Controller
             'contact_person.Email' => 'required|email:rfc,dns|max:100',
             'contact_person.PhoneNumber' => 'required|max:50',
         ]);
+
+        if($request->has('JiraUser') && $request['JiraUser'] == true){
+            $request->validate([
+                'ClientJiraControllerId' => 'required|unique:client_jira_controllers',
+                'JiraDomain' => 'required|unique:client_jira_controllers',
+                'JiraUserName' => 'required',
+                'JiraApiKey' => 'required',
+                'JiraIssueType' => 'required',
+            ]);
+        }
 
         try {
             if($request['CommonUser'] == true && strlen($request['RepositoryServer']) > 0){
@@ -59,6 +75,7 @@ class RegisterClientController extends Controller
             $client['State'] = $request['State'];
             $client['Zip'] = $request['Zip'];
             $client['Country'] = $request['Country'];
+            $client['JiraUser'] = $request['JiraUser'] == true ? 1 : 0;
             // This is used to link other table records with the client.
             $client->save();
             $clientId = $client['id'];
@@ -94,6 +111,18 @@ class RegisterClientController extends Controller
             $clientAuthReg['isAdmin'] = 0;
             $clientAuthReg['ExpirationDate'] = Carbon::now()->addYears($request['ExpirationInYears']);
             $clientAuthReg->save();
+
+            // Saving Jira settings if JiraUser.
+            if($request['JiraUser']){
+                $clientJiraController = new ClientJiraController();
+                $clientJiraController['ClientId'] = $clientId;
+                $clientJiraController['ClientJiraControllerId'] = $request['ClientJiraControllerId'];
+                $clientJiraController['JiraDomain'] = Crypt::encryptString($request['JiraDomain']);                
+                $clientJiraController['JiraUserName'] = Crypt::encryptString($request['JiraUserName']);                
+                $clientJiraController['JiraApiKey'] = Crypt::encryptString($request['JiraApiKey']);                
+                $clientJiraController['JiraIssueType'] = $request['JiraIssueType'];   
+                $clientJiraController->save();             
+            }
 
             return $this->getLastClientInfo($clientId);
 
@@ -135,6 +164,7 @@ class RegisterClientController extends Controller
             'EntityName' => $clientInfo['EntityName'],
             'Email' => $clientInfo['Email'],
             'ClientId' => $clientInfo['id'],
+            'JiraUser' => $clientInfo['JiraUser'] == 1 ? true : false,
             'RegistrationKey_sup' => $registrationInfo_sup['AuthKey'],
             'RegistrationKey_reg' => $registrationInfo_reg['AuthKey'],
             'ExpirationDate' => $registrationInfo_reg['ExpirationDate']

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
 class AdminUserSeeder extends Seeder
@@ -19,7 +20,9 @@ class AdminUserSeeder extends Seeder
 
     private function seedAdminUser(){
 
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         User::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $users = [
             'name' => 'admin_1',
