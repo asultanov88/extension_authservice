@@ -11,6 +11,7 @@ use App\Models\ClientAuth;
 use App\Models\ClientJiraController;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Crypt;
+use App\Models\ClientUserProfile;
 
 class RegisterClientController extends Controller
 {
@@ -38,6 +39,10 @@ class RegisterClientController extends Controller
             'contact_person.LastName' => 'required|max:50',
             'contact_person.Email' => 'required|email:rfc,dns|max:100',
             'contact_person.PhoneNumber' => 'required|max:50',
+
+            // At least 1 superuser must be added.
+            'superusers' => 'required|array|min:1',
+            'superusers.*' => 'required|email:rfc,dns|max:100',
         ]);
 
         if($request->has('JiraUser') && $request['JiraUser'] == true){
@@ -122,6 +127,16 @@ class RegisterClientController extends Controller
                 $clientJiraController['JiraApiKey'] = Crypt::encryptString($request['JiraApiKey']);                
                 $clientJiraController['JiraIssueType'] = $request['JiraIssueType'];   
                 $clientJiraController->save();             
+            }
+
+            // Saving superusers.
+            foreach ($request['superusers'] as $superuser) {
+                $clientUserProfile = new ClientUserProfile();
+                $clientUserProfile['ClientId'] = $clientId;
+                $clientUserProfile['UserEmail'] = $superuser;
+                $clientUserProfile['UserAppId'] = null;
+                $clientUserProfile['UserConfirmationId'] = null;
+                $clientUserProfile->save();
             }
 
             return $this->getLastClientInfo($clientId);

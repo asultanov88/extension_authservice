@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ClientJiraController;
+use App\Models\ClientUserProfile;
 
 class Client extends Model
 {
@@ -25,9 +27,15 @@ class Client extends Model
         'JiraUser',
     ];
 
-    // 'id' is the primary key in 'client' table.
     // 'ClientId' is the foreign key in 'client_jira_controllers' table.
+    // 'id' is the primary key in 'client' table.
     public function clientJiraController(){
         return $this->hasOne(ClientJiraController::class, 'ClientId', 'id');
+    }
+
+    // 'ClientId' is the foreign key in 'client_user_profiles' table.
+    // 'id' is the primary key in 'client' table.
+    public function users(){
+        return $this->hasMany(ClientUserProfile::class, 'ClientId', 'id');
     }
 }

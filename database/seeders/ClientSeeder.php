@@ -10,7 +10,7 @@ use App\Models\ContactPerson;
 use App\Models\ClientServer;
 use App\Models\ClientAuth;
 use App\Models\ClientJiraController;
-
+use App\Models\ClientUserProfile;
 
 class ClientSeeder extends Seeder
 {
@@ -33,6 +33,7 @@ class ClientSeeder extends Seeder
         ContactPerson::truncate();
         ClientJiraController::truncate();
         Client::truncate();
+        ClientUserProfile::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $clientId = 1;
@@ -111,12 +112,33 @@ class ClientSeeder extends Seeder
             'updated_at' => Carbon::now(),
         ];
 
+        $clientUserProfile = [
+            [
+                'UserProfileId' => 1,
+                'ClientId' => 1,
+                'UserEmail' => 'uzsultanov@gmail.com',
+                'UserAppId' => '1111-2222-3333-4444',
+                'UserConfirmationId' => null,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'UserProfileId' => 2,
+                'ClientId' => 1,
+                'UserEmail' => 'bahti005@gmail.com',
+                'UserAppId' => '4444-3333-2222-1111',
+                'UserConfirmationId' => null,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],            
+        ];
+
         Client::insert($client);
         ContactPerson::insert($contactPerson);
         ClientServer::insert($clientServer);
         ClientAuth::insert($clientAuth_sup);
         ClientAuth::insert($clientAuth_reg);
         ClientJiraController::insert($clientJiraController);
-
+        ClientUserProfile::insert($clientUserProfile);
     }
 }
