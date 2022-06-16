@@ -14,7 +14,6 @@ class ClientAuth extends Model
     protected $fillable = [
         'ClientId',
         'AuthKey',
-        'isAdmin',
         'ExpirationDate',
     ];
 }

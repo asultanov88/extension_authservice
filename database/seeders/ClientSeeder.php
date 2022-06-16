@@ -79,22 +79,10 @@ class ClientSeeder extends Seeder
 
         ];
 
-        $clientAuth_sup = [
+        $clientAuth = [
 
             'ClientId' => $clientId,
-            'AuthKey' => 'sup_61b589b5f03c42.30439098',
-            'isAdmin' => 1,
-            'ExpirationDate' => '2022-12-12',
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-
-        ];
-
-        $clientAuth_reg = [
-
-            'ClientId' => $clientId,
-            'AuthKey' => 'reg_61b589b5f160b1.70048695',
-            'isAdmin' => 0,
+            'AuthKey' => '61b589b5f03c42.30439098',
             'ExpirationDate' => '2022-12-12',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -128,7 +116,7 @@ class ClientSeeder extends Seeder
                 'ClientId' => 1,
                 'UserEmail' => 'bahti005@gmail.com',
                 'UserAppId' => 'a3a6120c-e3aa-4185-a664-53a1567b99e4',
-                'IsAdmin' => 1,
+                'IsAdmin' => 0,
                 'UserConfirmationId' => null,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -138,8 +126,7 @@ class ClientSeeder extends Seeder
         Client::insert($client);
         ContactPerson::insert($contactPerson);
         ClientServer::insert($clientServer);
-        ClientAuth::insert($clientAuth_sup);
-        ClientAuth::insert($clientAuth_reg);
+        ClientAuth::insert($clientAuth);
         ClientJiraController::insert($clientJiraController);
         ClientUserProfile::insert($clientUserProfile);
     }

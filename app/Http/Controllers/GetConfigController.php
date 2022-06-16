@@ -12,7 +12,7 @@ class GetConfigController extends Controller
 {
     public function getConfig(Request $request){
         $request->validate([
-            'RegistrationKey' => 'required|string|exists:client_authkey,AuthKey',
+            'RegistrationKey' => 'required|string',
             'UserEmail' => 'required|string',
             'UserAppId' => 'required|string',
         ]);
@@ -21,9 +21,7 @@ class GetConfigController extends Controller
             $regKeyAuth = ClientAuth::where('AuthKey','=',$request['RegistrationKey'])
                 ->join('client', 'client.id','=','client_authkey.ClientId')
                 ->first(
-                    array(                                      
-                        'client.id'                                     
-                      )
+                    array('client.id')
                 );
 
             // Must be accessible from the else closure.
@@ -42,7 +40,7 @@ class GetConfigController extends Controller
 
                     $config = [    
                         'client' => $client['EntityName'],
-                        'isAdmin' => $clientAuth['isAdmin'],
+                        'isAdmin' => $user['IsAdmin'],
                         'repositoryServer' => $clientServer['RepositoryServer'],
                         'registrationKey' => $registrationKey,
                         'token' => $this->generateRegToken($registrationKey),

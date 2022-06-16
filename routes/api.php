@@ -34,8 +34,13 @@ Route::group([
 Route::middleware('auth:api')->post('/register_client', [RegisterClientController::class, 'registerClient']);
 
 /**
+ * Add new user profile for registered client.
+ */
+Route::middleware('clientUserAuth')->post('/user_profile', [RegisterClientController::class, 'addUserProfile']);
+
+/**
  * Gets config object based on registration key.
  * middleware('client') - ensures user has a valied registration key.
  * 'client' middleware can be modified at: app\Http\Middleware\ValidateRegKey.php
  */
-Route::middleware('client')->post('/get_config', [GetConfigController::class, 'getConfig']);
+Route::post('/get_config', [GetConfigController::class, 'getConfig']);

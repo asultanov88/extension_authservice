@@ -17,7 +17,6 @@ class CreateClientAuthkeyTable extends Migration
             $table->id();
             $table->foreignId('ClientId')->references('id')->on('client');
             $table->string('AuthKey')->unique()->index();
-            $table->integer('isAdmin');
             $table->date('ExpirationDate');
             $table->timestamps();
         });

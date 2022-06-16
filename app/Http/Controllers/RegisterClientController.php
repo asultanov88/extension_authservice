@@ -18,8 +18,41 @@ class RegisterClientController extends Controller
     /**
      * Adds new user.
      */
-    public function addUserProfile(){
+    public function addUserProfile(Request $request){
+        $request->validate([
+            'NewUserEmail' => 'required|email:rfc,dns|max:100',
+            'isAdmin' => 'required|integer|min:0|max:1',
+            'AdminUser' => 'required|boolean'
+        ]);
 
+        try {
+            
+            if($request['AdminUser']){
+                $client = Client::where('id','=',$request['ClientId'])->first();
+                $existingUser = $client->users->where('UserEmail','=',$request['NewUserEmail'])->first();
+
+                if($existingUser && isset($existingUser['UserProfileId'])){
+                    return response()->
+                    json(['result' => ['message' => 'User already exists.']], 500);
+                }else{
+                    $clientUserProfile = new ClientUserProfile();
+                    $clientUserProfile['ClientId'] = $request['ClientId'];
+                    $clientUserProfile['UserEmail'] = $request['NewUserEmail'];
+                    $clientUserProfile['UserAppId'] = null;
+                    $clientUserProfile['isAdmin'] = $request['isAdmin'];
+                    $clientUserProfile['UserConfirmationId'] = null;
+                    $clientUserProfile->save();             
+                    return response()->json(['result' => 'success'], 200);
+                }
+            }else{
+                return response()->
+                json(['result'=>'Not admin user.'], 500);
+            }
+
+        } catch (Exception $e) {
+            return response()->
+            json($e, 500);
+        }
     }
 
     /**
@@ -50,8 +83,8 @@ class RegisterClientController extends Controller
             'contact_person.PhoneNumber' => 'required|max:50',
 
             // At least 1 superuser must be added.
-            'superusers' => 'required|array|min:1',
-            'superusers.*' => 'required|email:rfc,dns|max:100',
+            'admins' => 'required|array|min:1',
+            'admins.*' => 'required|email:rfc,dns|max:100',
         ]);
 
         if($request->has('JiraUser') && $request['JiraUser'] == true){
@@ -112,17 +145,9 @@ class RegisterClientController extends Controller
             $clientServer->save();
 
             // Saving into client_authkey table.
-            $clientAuthSup = new ClientAuth();
-            $clientAuthSup['ClientId'] = $clientId;
-            $clientAuthSup['AuthKey'] = $this->generateRegKey('sup_');
-            $clientAuthSup['isAdmin'] = 1;
-            $clientAuthSup['ExpirationDate'] = Carbon::now()->addYears($request['ExpirationInYears']);
-            $clientAuthSup->save();
-
             $clientAuthReg = new ClientAuth();
             $clientAuthReg['ClientId'] = $clientId;
-            $clientAuthReg['AuthKey'] = $this->generateRegKey('reg_');
-            $clientAuthReg['isAdmin'] = 0;
+            $clientAuthReg['AuthKey'] = $this->generateRegKey();
             $clientAuthReg['ExpirationDate'] = Carbon::now()->addYears($request['ExpirationInYears']);
             $clientAuthReg->save();
 
@@ -138,11 +163,11 @@ class RegisterClientController extends Controller
                 $clientJiraController->save();             
             }
 
-            // Saving superusers.
-            foreach ($request['superusers'] as $superuser) {
+            // Saving client admins.
+            foreach ($request['admins'] as $admin) {
                 $clientUserProfile = new ClientUserProfile();
                 $clientUserProfile['ClientId'] = $clientId;
-                $clientUserProfile['UserEmail'] = $superuser;
+                $clientUserProfile['UserEmail'] = $admin;
                 $clientUserProfile['UserAppId'] = null;
                 $clientUserProfile['IsAdmin'] = 1;
                 $clientUserProfile['UserConfirmationId'] = null;
@@ -161,18 +186,17 @@ class RegisterClientController extends Controller
     /**
      * Generates a unique registration key for each client.
      */
-    private function generateRegKey($prefix){
+    private function generateRegKey(){
 
         $registrationKey = null;
 
         do {
 
-            $registrationKey = uniqid($prefix, true);
+            $registrationKey = uniqid(true);
 
         } while (ClientAuth::where('AuthKey', '=', $registrationKey)->first());
 
         return $registrationKey;
-
     }
 
     /**
