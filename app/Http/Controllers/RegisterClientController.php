@@ -18,7 +18,9 @@ class RegisterClientController extends Controller
     /**
      * Adds new user.
      */
-    public function
+    public function addUserProfile(){
+
+    }
 
     /**
      * Regosters new client.
