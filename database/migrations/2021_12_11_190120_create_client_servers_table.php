@@ -15,7 +15,7 @@ class CreateClientServersTable extends Migration
     {
         Schema::create('client_server', function (Blueprint $table) {
             $table->id();
-            $table->integer('ClientId')->unique();
+            $table->foreignId('ClientId')->references('id')->on('client');
             $table->string('RepositoryServer');
             $table->timestamps();
         });

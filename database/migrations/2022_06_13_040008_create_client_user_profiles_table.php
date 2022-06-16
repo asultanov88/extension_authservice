@@ -18,6 +18,7 @@ class CreateClientUserProfilesTable extends Migration
             $table->foreignId('ClientId')->references('id')->on('client');
             $table->longtext('UserEmail');
             $table->longtext('UserAppId')->nullable();
+            $table->integer('IsAdmin');
             $table->foreignId('UserConfirmationId')->nullable()
                                                    ->references('UserConfirmationId')
                                                    ->on('user_confirmations');

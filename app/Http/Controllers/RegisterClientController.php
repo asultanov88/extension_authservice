@@ -15,7 +15,14 @@ use App\Models\ClientUserProfile;
 
 class RegisterClientController extends Controller
 {
+    /**
+     * Adds new user.
+     */
+    public function
 
+    /**
+     * Regosters new client.
+     */
     public function registerClient(Request $request){
 
         $request->validate([
@@ -135,6 +142,7 @@ class RegisterClientController extends Controller
                 $clientUserProfile['ClientId'] = $clientId;
                 $clientUserProfile['UserEmail'] = $superuser;
                 $clientUserProfile['UserAppId'] = null;
+                $clientUserProfile['IsAdmin'] = 1;
                 $clientUserProfile['UserConfirmationId'] = null;
                 $clientUserProfile->save();
             }

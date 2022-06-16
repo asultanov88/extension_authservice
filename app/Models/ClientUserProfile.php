@@ -19,6 +19,7 @@ class ClientUserProfile extends Model
         'ClientId',
         'UserEmail',
         'UserAppId',
+        'IsAdmin',
         'UserConfirmationId',
     ];
 

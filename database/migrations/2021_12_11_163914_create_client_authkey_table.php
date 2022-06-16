@@ -15,8 +15,8 @@ class CreateClientAuthkeyTable extends Migration
     {
         Schema::create('client_authkey', function (Blueprint $table) {
             $table->id();
-            $table->integer('ClientId');
-            $table->string('AuthKey')->unique();
+            $table->foreignId('ClientId')->references('id')->on('client');
+            $table->string('AuthKey')->unique()->index();
             $table->integer('isAdmin');
             $table->date('ExpirationDate');
             $table->timestamps();
