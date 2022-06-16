@@ -13,7 +13,7 @@ class GetConfigController extends Controller
     public function getConfig(Request $request){
         $request->validate([
             'RegistrationKey' => 'required|string|exists:client_authkey,AuthKey',
-            'UserEmail' => 'required|string|exists:client_user_profiles,UserEmail',
+            'UserEmail' => 'required|string',
             'UserAppId' => 'required|string',
         ]);
 
@@ -46,7 +46,9 @@ class GetConfigController extends Controller
                         'repositoryServer' => $clientServer['RepositoryServer'],
                         'registrationKey' => $registrationKey,
                         'token' => $this->generateRegToken($registrationKey),
-                        'uuid' => $client['uuid'],    
+                        'uuid' => $client['uuid'],  
+                        'userEmail' => $user['UserEmail'], 
+                        'userProfileId' => $user['UserProfileId'], 
                     ];
         
                     // Add Jira settings only if user is a JiraUser.
