@@ -35,8 +35,8 @@ class GetConfigController extends Controller
             if($regKeyAuth && isset($regKeyAuth['id'])){
             
                 $client = Client::where('id','=',$regKeyAuth['id'])->first();
-                $user = $client->users->where('UserEmail','=',$request['UserEmail'])->first();
-                return $userConfirmation = $user->userConfirmation;
+                return $user = $client->users->where('UserEmail','=',$request['UserEmail'])->first();
+                $userConfirmation = $user->userConfirmation;
     
                 if($userConfirmation){
                     if($request['ConfirmationCode'] == $userConfirmation['UserConfirmationCode'] &&
