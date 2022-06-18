@@ -7,9 +7,70 @@ use App\Models\Client;
 use App\Models\ClientAuth;
 use App\Models\ClientServer;
 use App\Models\UserConfirmarion;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegistrationConfirmation;
 
 class GetConfigController extends Controller
 {
+    /**
+     * Confirms regostration code.
+     */
+    public function confirmUserRegistrationCode(Request $request){
+        $request->validate([
+            'RegistrationKey' => 'required|string',
+            'UserEmail' => 'required|string',
+            'UserAppId' => 'required|string',
+            'ConfirmationCode' => 'required|string',
+        ]);
+
+        try {
+            $regKeyAuth = ClientAuth::where('AuthKey','=',$request['RegistrationKey'])
+            ->join('client', 'client.id','=','client_authkey.ClientId')
+            ->first(
+                array('client.id')
+            );
+    
+            $authorized = false;
+    
+            if($regKeyAuth && isset($regKeyAuth['id'])){
+            
+                $client = Client::where('id','=',$regKeyAuth['id'])->first();
+                $user = $client->users->where('UserEmail','=',$request['UserEmail'])->first();
+                $userConfirmation = $user->userConfirmation;
+    
+                if($userConfirmation){
+                    if($request['ConfirmationCode'] == $userConfirmation['UserConfirmationCode'] &&
+                       $request['UserAppId'] == $userConfirmation['NewAppId']){
+                        $user->update([
+                            'UserAppId' => $userConfirmation['NewAppId'],
+                            'UserConfirmationId' => null,
+                        ]);
+                        $userConfirmation->delete();
+                        $authorized = true;
+                       }
+                }else{
+                    return response()->
+                    json(['result' => ['message'=>'Unable to confirm registration']], 500);
+                }
+            }
+    
+            if($authorized){
+                $config = $this->getConfig($request);
+                return $config;
+            }else{
+                return response()->
+                json(['error' => 'Unauthorized'], 401);
+            }
+        } catch (Exception $e) {
+            return response()->
+            json($e, 500);
+        }
+
+    }
+
+    /**
+     * Gets application configuration.
+     */
     public function getConfig(Request $request){
         $request->validate([
             'RegistrationKey' => 'required|string',
@@ -26,6 +87,8 @@ class GetConfigController extends Controller
 
             // Must be accessible from the else closure.
             $user = null;
+
+            $authorized = false;
 
             if($regKeyAuth && isset($regKeyAuth['id'])){
 
@@ -60,6 +123,7 @@ class GetConfigController extends Controller
                                 'JiraIssueType' => $clientJira->JiraIssueType,
                             ];
                         }    
+                        $authorized = true;
                         return response()->
                         json($config, 200); 
 
@@ -75,7 +139,8 @@ class GetConfigController extends Controller
 
                     $userConfirmation = new UserConfirmarion();
                     $userConfirmation['NewAppId'] = $request['UserAppId'];
-                    $userConfirmation['UserConfirmationCode'] = $this->generateConfirmationCode();
+                    $confirmationCode = $this->generateConfirmationCode();
+                    $userConfirmation['UserConfirmationCode'] = $confirmationCode;
                     $userConfirmation->save();
 
                     // Updating the user profile with the new UserConfirmationId.
@@ -83,17 +148,15 @@ class GetConfigController extends Controller
                         'UserConfirmationId' => $userConfirmation['UserConfirmationId']
                     ]);
 
-                    // TODO: Send email to user with the confirmation code;
+                    // Send email to user with the confirmation code;
+                    Mail::to($user->UserEmail)->send(new RegistrationConfirmation($confirmationCode));
+
                     return response()->
                     json(['result' => ['status'=>'Unauthorized','message'=>'Confirmation sent']], 200);
-                }else{
-                    // UserEmail does not match.
-                    return response()->
-                    json(['error' => 'Unauthorized'], 401);
                 }
+            }
 
-            }else{
-                // RegistrationKey does not match.
+            if(!$authorized){
                 return response()->
                 json(['error' => 'Unauthorized'], 401);
             }
@@ -102,7 +165,6 @@ class GetConfigController extends Controller
             return response()->
             json($e, 500);
         }
-
     }
 
     /**
@@ -118,6 +180,6 @@ class GetConfigController extends Controller
      * Generates confirmation code.
      */
     private function generateConfirmationCode(){
-        return substr(str_shuffle("0123456789abcdefghijklmnopqrstvwxyz"), 0, 8);
+        return substr(str_shuffle("a0b1c2d3e4f5g6h7i8j9k@l!m%n0o1p2q3r4s5t6v7w8x9y@z"), 0, 8);
     }
 }

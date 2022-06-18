@@ -39,6 +39,11 @@ Route::middleware('auth:api')->post('/register_client', [RegisterClientControlle
 Route::middleware('clientUserAuth')->post('/user_profile', [RegisterClientController::class, 'addUserProfile']);
 
 /**
+ * Confirm user registration.
+ */
+Route::post('/confirm_user', [GetConfigController::class, 'confirmUserRegistrationCode']);
+
+/**
  * Gets config object based on registration key.
  * middleware('client') - ensures user has a valied registration key.
  * 'client' middleware can be modified at: app\Http\Middleware\ValidateRegKey.php
