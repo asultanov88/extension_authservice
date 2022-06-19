@@ -47,9 +47,6 @@ class GetConfigController extends Controller
                         ]);
                         $userConfirmation->delete();
                         $authorized = true;
-                       }else{
-                            return response()->
-                            json(['result' => ['message'=>'Unable to confirm registration']], 500);
                        }
                 }else{
                     return response()->
