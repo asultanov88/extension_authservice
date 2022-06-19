@@ -47,6 +47,9 @@ class GetConfigController extends Controller
                         ]);
                         $userConfirmation->delete();
                         $authorized = true;
+                       }else{
+                            return response()->
+                            json(['result' => ['message'=>'Unable to confirm registration']], 500);
                        }
                 }else{
                     return response()->
@@ -171,9 +174,7 @@ class GetConfigController extends Controller
      * The salt is in .env file as REG_KEY_CRYPT_SALT.
      */
     private function generateRegToken($regKey){
-
         return crypt($regKey, '$5$rounds=5000'.env('REG_KEY_CRYPT_SALT'));
-
     }
 
     /**
