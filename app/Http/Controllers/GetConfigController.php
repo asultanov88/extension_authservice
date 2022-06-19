@@ -47,6 +47,9 @@ class GetConfigController extends Controller
                         ]);
                         $userConfirmation->delete();
                         $authorized = true;
+                       }else{
+                            return response()->
+                            json(['result' => ['message'=>'Incorrect confirmation code.']], 500);
                        }
                 }else{
                     return response()->
