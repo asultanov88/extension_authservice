@@ -18,6 +18,28 @@ use App\Mail\RegistrationConfirmation;
 class RegisterClientController extends Controller
 {
     /**
+     * Gets a list of user profiles by search string.
+     */
+    public function getUserProfiles(Request $request){
+        $request->validate([
+            'query' => 'required|min:2|max:50'
+        ]);
+
+        try {
+
+            $client = Client::where('id','=',$request['ClientId'])->first();
+            $users = $client->users->where('UserEmail','like','%'.$request['query'].'%')->get();
+
+            return response()->
+            json(['result' => $users], 200);
+
+        } catch (Exception $e) {
+            return response()->
+            json($e, 500);
+        }
+    }
+
+    /**
      * Adds new user.
      */
     public function addUserProfile(Request $request){

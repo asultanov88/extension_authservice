@@ -49,3 +49,9 @@ Route::post('/confirm_user', [GetConfigController::class, 'confirmUserRegistrati
  * 'client' middleware can be modified at: app\Http\Middleware\ValidateRegKey.php
  */
 Route::post('/get_config', [GetConfigController::class, 'getConfig']);
+
+/**
+ * Gets user profile list by search string.
+ */
+Route::get('/user-profiles', [RegisterClientController::class, 'getUserProfiles']);
+
