@@ -205,8 +205,7 @@ class RegisterClientController extends Controller
     private function getLastClientInfo($clientId){
 
         $clientInfo = Client::where('id', '=', $clientId)->first();
-        $registrationInfo_reg = ClientAuth::where('ClientId', '=', $clientId)->where('isAdmin', '=', 0)->first();
-        $registrationInfo_sup = ClientAuth::where('ClientId', '=', $clientId)->where('isAdmin', '=', 1)->first();
+        $registrationInfo = ClientAuth::where('ClientId', '=', $clientId)->first();
 
         $lastClientInfo = [
 
@@ -214,9 +213,8 @@ class RegisterClientController extends Controller
             'Email' => $clientInfo['Email'],
             'ClientId' => $clientInfo['id'],
             'JiraUser' => $clientInfo['JiraUser'] == 1 ? true : false,
-            'RegistrationKey_sup' => $registrationInfo_sup['AuthKey'],
-            'RegistrationKey_reg' => $registrationInfo_reg['AuthKey'],
-            'ExpirationDate' => $registrationInfo_reg['ExpirationDate']
+            'RegistrationKey' => $registrationInfo['AuthKey'],
+            'ExpirationDate' => $registrationInfo['ExpirationDate']
 
         ];
 
