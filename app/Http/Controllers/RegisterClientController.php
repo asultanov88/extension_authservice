@@ -27,8 +27,9 @@ class RegisterClientController extends Controller
 
         try {
 
+            $query = $request['query'];
             $client = Client::where('id','=',$request['ClientId'])->first();
-            $users = $client->users->where('UserEmail','like','%'.$request['query'].'%')->get();
+            $users = $client->users->where('UserEmail','=',$query)->all();
 
             return response()->
             json(['result' => $users], 200);

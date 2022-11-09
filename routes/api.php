@@ -53,5 +53,5 @@ Route::post('/get_config', [GetConfigController::class, 'getConfig']);
 /**
  * Gets user profile list by search string.
  */
-Route::get('/user-profiles', [RegisterClientController::class, 'getUserProfiles']);
+Route::middleware('clientUserAuth')->get('/user-profiles', [RegisterClientController::class, 'getUserProfiles']);
 
