@@ -46,7 +46,7 @@ class RegisterClientController extends Controller
                     $clientUserProfile->save();            
                     
                     // Send email to user for notification;
-                    Mail::to($request['NewUserEmail'])->subject('User Profile Request')->send(new RegistrationConfirmation(null, true));
+                    Mail::to($request['NewUserEmail'])->send(new RegistrationConfirmation(null, true));
 
 
                     return response()->json(['result' => 'success'], 200);
