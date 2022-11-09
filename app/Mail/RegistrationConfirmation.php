@@ -12,15 +12,17 @@ class RegistrationConfirmation extends Mailable
     use Queueable, SerializesModels;
 
     public $confirmationCode = null;
+    public $notify = false;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($confirmationCode)
+    public function __construct($confirmationCode, $notify)
     {
         $this->confirmationCode = $confirmationCode;
+        $this->notify = $notify;
     }
 
     /**
@@ -30,6 +32,7 @@ class RegistrationConfirmation extends Mailable
      */
     public function build()
     {
-        return $this->markdown('mail.registration-confirmation');
+        // if $notify is true, we send only notification email, else, confirmation email is sent.
+        return $this->markdown($this->notify ? 'mail.notify-user-addition' : 'mail.registration-confirmation');
     }
 }

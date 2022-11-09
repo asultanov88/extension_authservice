@@ -41,7 +41,12 @@ class RegisterClientController extends Controller
                     $clientUserProfile['UserAppId'] = null;
                     $clientUserProfile['isAdmin'] = $request['isAdmin'];
                     $clientUserProfile['UserConfirmationId'] = null;
-                    $clientUserProfile->save();             
+                    $clientUserProfile->save();            
+                    
+                    // Send email to user for notification;
+                    Mail::to($request['NewUserEmail'])->send(new RegistrationConfirmation(null, true));
+
+
                     return response()->json(['result' => 'success'], 200);
                 }
             }else{

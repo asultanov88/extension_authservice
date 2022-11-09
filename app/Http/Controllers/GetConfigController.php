@@ -152,7 +152,7 @@ class GetConfigController extends Controller
                     ]);
 
                     // Send email to user with the confirmation code;
-                    Mail::to($user->UserEmail)->send(new RegistrationConfirmation($confirmationCode));
+                    Mail::to($user->UserEmail)->send(new RegistrationConfirmation($confirmationCode, false));
 
                     return response()->
                     json(['result' => ['status'=>'Unauthorized','message'=>'Confirmation sent']], 200);
