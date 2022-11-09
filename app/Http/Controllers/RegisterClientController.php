@@ -12,6 +12,8 @@ use App\Models\ClientJiraController;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\ClientUserProfile;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegistrationConfirmation;
 
 class RegisterClientController extends Controller
 {
