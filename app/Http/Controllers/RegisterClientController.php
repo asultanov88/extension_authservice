@@ -28,11 +28,26 @@ class RegisterClientController extends Controller
         try {
 
             $query = $request['query'];
-            $client = Client::where('id','=',$request['ClientId'])->first();
-            $users = $client->users->where('UserEmail','=',$query)->all();
+
+
+            $users = Client::join('client_user_profiles','ClientId','=','client.id')
+                            ->where('client.id','=',$request['ClientId'])
+                            ->where('client_user_profiles.UserEmail','like','%'.$query.'%')
+                            ->get()->toArray();
+
+            $result = [];
+
+            foreach($users as $user){
+                $searchResult = array(
+                    'UserEmail' => $user['UserEmail'],
+                    'UserProfileId' => $user['UserProfileId'],
+                    'IsAdmin' => $user['IsAdmin']
+                );
+                array_push($result, $searchResult);
+            }
 
             return response()->
-            json(['result' => $users], 200);
+            json(['result' => $result], 200);
 
         } catch (Exception $e) {
             return response()->
