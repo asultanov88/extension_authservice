@@ -18,6 +18,56 @@ use App\Mail\RegistrationConfirmation;
 class RegisterClientController extends Controller
 {
     /**
+     * Updates user profile.
+     */
+    public function patchUserProfile(Request $request){
+        $request->validate([
+            'UserProfileEmail' => 'required|email:rfc,dns|max:100',
+            'UserProfileId' => 'required|integer|min:0',
+            'IsAdmin' => 'required|integer|min:0|max:1',
+            'AdminUser' => 'required|boolean'
+        ]);
+
+        try {
+            if($request['AdminUser']){
+
+                $client = Client::where('client.id','=',$request['ClientId'])->first();
+                $users = $client->users;
+                $userCount = 0;
+
+                foreach($users as $user){
+                    if(strtolower($user['UserEmail']) == strtolower($request['UserProfileEmail'])){
+                        $userCount++;                  
+                    }
+                }
+
+                // Requested email has a duplicate.
+                if($userCount > 1){
+                    return response()->json(['result' => ['message' => 'Duplicate email exists.']], 500);
+                }else{
+                    foreach($users as $user){
+                        if($user['UserProfileId'] == $request['UserProfileId']){
+                            $user->update([
+                                'UserEmail'=>$request['UserProfileEmail'],
+                                'IsAdmin'=>$request['IsAdmin'],
+                            ]);
+                            break;                    
+                        }
+                    }    
+                    return response()->json(['result' => $user], 200);
+                }
+                
+            }else{
+                return response()->
+                json(['result'=>'Not admin user.'], 500);
+            }
+        } catch (Exception $e) {
+            return response()->
+            json($e, 500);
+        }
+    }
+
+    /**
      * Gets a list of user profiles by search string.
      */
     public function getUserProfiles(Request $request){
