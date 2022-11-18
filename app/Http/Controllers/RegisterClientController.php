@@ -32,9 +32,10 @@ class RegisterClientController extends Controller
                 $client = Client::where('client.id','=',$request['ClientId'])->first();
                 $users = $client->users;
                 $userResult = null;
-                
+                 
                 foreach($users as $user){
-                    if($user['UserProfileId'] == $request['UserProfileId']){
+                    // User cannot delete own profile.
+                    if($user['UserProfileId'] == $request['UserProfileId'] && $user['UserEmail'] != $request['UserEmail']){
                         $userResult = $user;
                         break;
                     }
@@ -45,7 +46,7 @@ class RegisterClientController extends Controller
                     return response()->json(['result'=>'success'], 200);
                 }
 
-                return response()->json(['result' => ['message' => 'Unable to find user profile.']], 500);
+                return response()->json(['result' => ['message' => 'Unable to delete user profile.']], 500);
 
             }
         } catch (Exception $e) {
