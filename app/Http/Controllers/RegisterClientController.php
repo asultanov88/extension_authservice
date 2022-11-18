@@ -18,6 +18,42 @@ use App\Mail\RegistrationConfirmation;
 class RegisterClientController extends Controller
 {
     /**
+     * Deletes user profile.
+     */
+    public function deleteUserProfile(Request $request){
+        $request->validate([
+            'UserProfileId' => 'required|integer|min:0',
+            'AdminUser' => 'required|boolean'
+        ]);
+
+        try {
+            if($request['AdminUser']){
+                
+                $client = Client::where('client.id','=',$request['ClientId'])->first();
+                $users = $client->users;
+                $userResult = null;
+                
+                foreach($users as $user){
+                    if($user['UserProfileId'] == $request['UserProfileId']){
+                        $userResult = $user;
+                        break;
+                    }
+                }
+
+                if($userResult){
+                    $userResult->delete();
+                    return response()->json(['result'=>'success'], 200);
+                }
+
+                return response()->json(['result' => ['message' => 'Unable to find user profile.']], 500);
+
+            }
+        } catch (Exception $e) {
+            return response()->
+            json($e, 500);
+        }
+    }
+    /**
      * Updates user profile.
      */
     public function patchUserProfile(Request $request){
@@ -111,7 +147,7 @@ class RegisterClientController extends Controller
     public function addUserProfile(Request $request){
         $request->validate([
             'NewUserEmail' => 'required|email:rfc,dns|max:100',
-            'isAdmin' => 'required|integer|min:0|max:1',
+            'IsAdmin' => 'required|integer|min:0|max:1',
             'AdminUser' => 'required|boolean'
         ]);
 

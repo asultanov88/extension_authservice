@@ -53,8 +53,14 @@ Route::post('/get_config', [GetConfigController::class, 'getConfig']);
 /**
  * Gets user profile list by search string.
  */
-Route::middleware('clientUserAuth')->get('/user-profiles', [RegisterClientController::class, 'getUserProfiles']);
+Route::middleware('clientUserAuth')->get('/user-profile', [RegisterClientController::class, 'getUserProfiles']);
+
 /**
  * Updates user profile.
  */
 Route::middleware('clientUserAuth')->patch('/user-profile', [RegisterClientController::class, 'patchUserProfile']);
+
+/**
+ * Deletes user profile.
+ */
+Route::middleware('clientUserAuth')->delete('/user-profile', [RegisterClientController::class, 'deleteUserProfile']);
