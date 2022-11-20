@@ -18,6 +18,36 @@ use App\Mail\RegistrationConfirmation;
 class RegisterClientController extends Controller
 {
     /**
+     * Gets UserEmail by UserProfileId.
+     */
+    public function getUserEmail(Request $request){
+        $request->validate([
+            'UserProfileId' => 'required|integer|min:0',
+        ]);
+
+        try {
+            $userEmail = Client::join('client_user_profiles','ClientId','=','client.id')
+                            ->where('client.id','=',$request['ClientId'])
+                            ->where('client_user_profiles.UserProfileId','=',$request['UserProfileId'])
+                            ->first(
+                                array(
+                                    'client_user_profiles.UserEmail',     
+                                )
+                            );
+
+            if($userEmail){
+                return response()->json(['result'=>$userEmail], 200);
+            }else{
+                return response()->json(['result' => ['message' => 'Unable to find user profile by id.']], 500);
+            }
+
+        } catch (Exception $e) {
+            return response()->
+            json($e, 500);
+        }
+    }
+
+    /**
      * Deletes user profile.
      */
     public function deleteUserProfile(Request $request){

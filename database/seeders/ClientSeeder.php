@@ -82,8 +82,8 @@ class ClientSeeder extends Seeder
         $clientAuth = [
 
             'ClientId' => $clientId,
-            'AuthKey' => '61b589b5f03c42.30439098',
-            'ExpirationDate' => '2022-12-12',
+            'AuthKey' => '1636b28adbd4ea',
+            'ExpirationDate' => '2025-12-12',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
 

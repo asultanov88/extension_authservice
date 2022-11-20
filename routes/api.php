@@ -64,3 +64,8 @@ Route::middleware('clientUserAuth')->patch('/user-profile', [RegisterClientContr
  * Deletes user profile.
  */
 Route::middleware('clientUserAuth')->delete('/user-profile', [RegisterClientController::class, 'deleteUserProfile']);
+
+/**
+ * Gets UserEmail by UserProfileId
+ */
+Route::middleware('clientUserAuth')->get('/user-email', [RegisterClientController::class, 'getUserEmail']);
